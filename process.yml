@@ -1,6 +1,6 @@
 apps:
   - script: dist/src/main.js
-    name: test_server
+    name: template_server
     instances: 1
     watch: true
     ignore_watch: static | mongodb
