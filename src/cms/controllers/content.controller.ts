@@ -27,7 +27,7 @@ import { PaginationParamsDto } from '../../shared/dtos/pagination-params.dto'
 import { CreateContentDto, UpdateContentDto } from '../dtos/content.dto';
 import { AuthGuard } from '@nestjs/passport';
 @ApiTags('模版')
-@Controller('Content')
+@Controller('content')
 export class ContentController {
   constructor(private readonly ContentService: ContentService) { }
 
