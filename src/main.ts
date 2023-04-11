@@ -9,6 +9,9 @@ import { RemoveSensitiveUserInfoInterceptor } from './shared/interceptors/remove
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+
+  app.enableCors();
+
   app.useGlobalPipes(new ValidationPipe({
     forbidUnknownValues: false
   }))
