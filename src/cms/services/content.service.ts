@@ -35,12 +35,9 @@ export class ContentService {
     return await this.contentRepository.findOneBy(id)
   }
 
-  async update(id: string, course: UpdateContentDto) {
-    // 去除时间戳和id
-    ['_id', 'createdAt', 'updatedAt'].forEach(
-      k => delete course[k]
-    )
-    const ret = await this.contentRepository.update(id, course)
+  async update(id: string, dto: UpdateContentDto) {
+
+    const ret = await this.contentRepository.update(id, dto)
 
     // TODO 暂时使用同步刷新
     // await this.sync(id)
