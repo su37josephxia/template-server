@@ -4,6 +4,9 @@ import { IsNotEmpty } from 'class-validator';
 import { ObjectId } from 'mongoose';
 
 export class CreateContentDto {
+    @ApiProperty({ example: 'ID' })
+    id?: number;
+
     @ApiProperty({ example: '标题' })
     @IsNotEmpty()
     title: string;
@@ -17,8 +20,7 @@ export class CreateContentDto {
     type: string;
 
     @ApiProperty({ example: '1' })
-    @IsNotEmpty()
-    userId: ObjectId;
+    userId?: ObjectId;
 
 }
 

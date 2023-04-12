@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Query } from '@nestjs/common';
 import { In, Like, Raw, MongoRepository, ObjectID } from 'typeorm';
 import { Content } from '../entities/content.mongo.entity'
 import { PaginationParamsDto } from '../../shared/dtos/pagination-params.dto'
@@ -13,26 +13,43 @@ export class ContentService {
 
 
   async create(dto: CreateContentDto) {
-    const ret = await this.contentRepository.save(dto)
-    // await this.sync('' + ret._id)
+    const has = await this.contentRepository.findOneBy({ id: dto.id })
+    let ret
+    if (!has) {
+      // 判断是否存在
+      const count = await this.contentRepository.count()
+      dto.id = count + 1
+      dto['isDelete'] = false
+      ret = await this.contentRepository.save(dto)
+    } else {
+      ret = await this.contentRepository.updateOne({ id: dto.id }, { $set: dto })
+    }
     return ret
   }
 
-  async findAll({ pageSize, page }: PaginationParamsDto): Promise<{ data: Content[], count: number }> {
-
+  async findAll({ pageSize, page, userId }): Promise<{ data: Content[], count: number }> {
     const [data, count] = await this.contentRepository.findAndCount({
+      where: {
+        userId,
+        isDelete: false
+      },
       order: { createdAt: 'DESC' },
       skip: (page - 1) * pageSize,
       take: (pageSize * 1),
       cache: true
     })
+
     return {
       data, count
     }
   }
 
   async findOne(id: string) {
-    return await this.contentRepository.findOneBy(id)
+    const ret = await this.contentRepository.findOneBy({
+      id: parseInt(id),
+      isDelete: false
+    })
+    return ret
   }
 
   async update(id: string, dto: UpdateContentDto) {
@@ -46,6 +63,6 @@ export class ContentService {
 
 
   async remove(id: string): Promise<any> {
-    return await this.contentRepository.delete(id)
+    return await this.contentRepository.updateOne({ id: parseInt(id) }, { $set: { isDelete: true } })
   }
 }

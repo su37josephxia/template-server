@@ -14,6 +14,9 @@ import {
   Scope,
   UseGuards,
   HttpStatus,
+  HttpCode,
+  Req,
+  Session,
 
 } from '@nestjs/common';
 import { ContentService } from '../services/content.service';
@@ -27,7 +30,7 @@ import { PaginationParamsDto } from '../../shared/dtos/pagination-params.dto'
 import { CreateContentDto, UpdateContentDto } from '../dtos/content.dto';
 import { AuthGuard } from '@nestjs/passport';
 @ApiTags('模版')
-@Controller('contents')
+@Controller('api/web/content')
 export class ContentController {
   constructor(private readonly ContentService: ContentService) { }
 
@@ -44,11 +47,16 @@ export class ContentController {
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @Post()
-  async create(@Body() createCourseDto: CreateContentDto) {
-    return {
-      data: await this.ContentService.create(createCourseDto),
-    }
+  @Post('save')
+  @HttpCode(200)
+  async create(@Body() dto: CreateContentDto, @Req() req
+
+  ) {
+    const userId = req.user.id
+    dto.userId = userId
+    const content = await this.ContentService.create(dto)
+    // content['id'] = content._id
+    return content
   }
 
   @ApiOperation({
@@ -62,15 +70,23 @@ export class ContentController {
     status: HttpStatus.NOT_FOUND,
     type: BaseApiErrorResponse,
   })
-  @Get()
+  @Get('list')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   async findAll(
-    @Query() query: PaginationParamsDto
+    @Query() query: PaginationParamsDto,
+    @Req() req
   ) {
+    const userId = req.user.id
+    const { pageSize, page } = query
+    const { data, count } = await this.ContentService.findAll({
+      ...query, userId
+    });
 
-    const { data, count } = await this.ContentService.findAll(query);
     return {
-      data,
-      meta: { total: count }
+      content: data,
+      pageSize,
+      pageNo: 1
     }
   }
 
@@ -85,11 +101,10 @@ export class ContentController {
     status: HttpStatus.NOT_FOUND,
     type: BaseApiErrorResponse,
   })
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return {
-      data: await this.ContentService.findOne(id)
-    }
+  @Get('get')
+  async findOne(@Query() query) {
+    const { id } = query
+    return await this.ContentService.findOne(id)
   }
 
   @ApiOperation({
@@ -106,6 +121,7 @@ export class ContentController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
+  @HttpCode(200)
   async update(@Param('id') id: string, @Body() updateCourseDto: UpdateContentDto) {
     return {
       data: await this.ContentService.update(id, updateCourseDto)
@@ -120,8 +136,10 @@ export class ContentController {
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Post('delete')
+  @HttpCode(200)
+  remove(@Body() dto) {
+    const { id } = dto
     return this.ContentService.remove(id);
   }
 }

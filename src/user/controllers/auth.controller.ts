@@ -1,11 +1,11 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Session, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { BaseApiErrorResponse, SwaggerBaseApiResponse } from '../../shared/dtos/base-api-response.dto';
 import { LoginDTO } from "../dtos/login.dto";
 import { AuthService } from "../services/auth.service";
 import { UserInfoDto, RegisterCodeDTO, RegisterSMSDTO } from '../dtos/auth.dto';
 import { AuthGuard } from "@nestjs/passport";
-import { UserService } from "../services/user.service";
+import { Request } from 'express';
 
 @ApiTags('认证鉴权')
 @Controller('api')
@@ -28,9 +28,12 @@ export class AuthController {
     @HttpCode(200)
     @Post('login')
     async login(
-        @Body() loginDTO: LoginDTO
+        @Body() loginDTO: LoginDTO,
+        @Session() session: Record<string, any>
     ): Promise<any> {
-        return this.authService.login(loginDTO)
+        const user = await this.authService.login(loginDTO)
+        session.user = user
+        return user
     }
 
     @ApiOperation({

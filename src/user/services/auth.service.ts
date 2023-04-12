@@ -31,6 +31,7 @@ export class AuthService {
     }
 
     async certificate(user: User) {
+
         const payload = {
             id: user._id
         }
@@ -57,16 +58,16 @@ export class AuthService {
     async login(login: LoginDTO) {
 
         // 校验用户信息
-        const result = await this.checkLoginForm(login)
+        const user = await this.checkLoginForm(login)
+        const token = await this.certificate(user)
+        user['sessionId'] = `Bearer ${token}`
 
-        return {
-            "code": 200,
-            result
-            // "result": {
-            //     "sessionId": "98d34f13-95ff-4e27-9952-578560a262b9", "userId": 1,
-            //     "name": "admin"
-            // },
-        }
+        return user
+        // "result": {
+        //     "sessionId": "98d34f13-95ff-4e27-9952-578560a262b9", "userId": 1,
+        //     "name": "admin"
+        // },
+
     }
 
     async registerByName(dto: LoginDTO) {
@@ -78,7 +79,7 @@ export class AuthService {
             password,
             passwordRepeat: password
         })
-        return { "code": 200, result }
+        return result
     }
 
     async info(id: string) {
@@ -97,8 +98,6 @@ export class AuthService {
      * 获取验证码
      */
     async registerCode(dto: RegisterCodeDTO) {
-
-
         const { phoneNumber, captchaCode, captchaId } = dto
 
         // 校验图形验证码
@@ -189,10 +188,10 @@ export class AuthService {
     }
 
     /**
-   * 注册
-   * @param registerDTO 
-   * @returns 
-   */
+     * 注册
+     * @param registerDTO 
+     * @returns 
+     */
     async register(
         registerDTO: RegisterDTO
     ): Promise<any> {

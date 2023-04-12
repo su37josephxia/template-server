@@ -17,7 +17,10 @@ export class RemoveSensitiveUserInfoInterceptor implements NestInterceptor {
                     this.delValue(res, 'salt')
                 }
 
-                return res
+                return {
+                    code: 200,
+                    result: res
+                }
             })
         )
     }
