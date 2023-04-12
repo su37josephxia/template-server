@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { BaseApiErrorResponse, SwaggerBaseApiResponse } from '../../shared/dtos/base-api-response.dto';
 import { LoginDTO } from "../dtos/login.dto";
@@ -8,7 +8,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { UserService } from "../services/user.service";
 
 @ApiTags('认证鉴权')
-@Controller('auth')
+@Controller('api')
 export class AuthController {
     constructor(
         private authService: AuthService
@@ -25,12 +25,35 @@ export class AuthController {
         status: HttpStatus.NOT_FOUND,
         type: BaseApiErrorResponse,
     })
+    @HttpCode(200)
     @Post('login')
     async login(
         @Body() loginDTO: LoginDTO
     ): Promise<any> {
         return this.authService.login(loginDTO)
     }
+
+    @ApiOperation({
+        summary: '注册',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: SwaggerBaseApiResponse(LoginDTO),
+    })
+    @ApiResponse({
+        status: HttpStatus.NOT_FOUND,
+        type: BaseApiErrorResponse,
+    })
+    @HttpCode(200)
+    @Post('register')
+    async register(
+        @Body() LoginDTO: LoginDTO
+    ): Promise<any> {
+        return this.authService.registerByName(LoginDTO)
+
+    }
+
+
 
     @ApiOperation({
         summary: '用户当前信息',
