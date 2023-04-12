@@ -4,14 +4,24 @@ import { AppModule } from './app.module';
 import { generateDocument } from './doc';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import * as session from 'express-session';
 import { RemoveSensitiveUserInfoInterceptor } from './shared/interceptors/remove-sensitive-info.interceptor';
 
+
+
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { cors: true });
 
 
-  app.enableCors();
+  app.use(session({
 
+    secret: 'your-secret-key',
+
+    resave: false,
+
+    saveUninitialized: false,
+
+  }));
   app.useGlobalPipes(new ValidationPipe({
     forbidUnknownValues: false
   }))

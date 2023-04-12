@@ -2,7 +2,7 @@ import { JwtService } from "@nestjs/jwt";
 import { LoginDTO } from '../dtos/login.dto';
 import { User } from "../entities/user.mongo.entity";
 import { ObjectID, MongoRepository } from 'typeorm';
-import { Inject, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, HttpException, Inject, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { encryptPassword, makeSalt } from '../../shared/utils/cryptogram.util';
 import { UserInfoDto, RegisterCodeDTO, RegisterDTO, RegisterSMSDTO } from '../dtos/auth.dto';
 import { Role } from "../entities/role.mongo.entity";
@@ -39,34 +39,46 @@ export class AuthService {
     }
 
     async checkLoginForm(loginDto: LoginDTO) {
-        const { phoneNumber, password } = loginDto
+        const { name, password } = loginDto
         const user = await this.userRepository.findOneBy({
-            phoneNumber
+            name
         })
         if (!user) {
-            throw new NotFoundException('用户不存在')
+            throw new InternalServerErrorException('用户不存在')
         }
         const { password: dbPassword, salt } = user
         const currentHashPassword = encryptPassword(password, salt)
         if (currentHashPassword !== dbPassword) {
-            throw new NotFoundException('密码错误')
+            throw new InternalServerErrorException('密码错误')
         }
         return user
     }
 
-
     async login(login: LoginDTO) {
-        // 校验用户信息
-        const user = await this.checkLoginForm(login)
 
-        // 签发token
-        const token = await this.certificate(user)
+        // 校验用户信息
+        const result = await this.checkLoginForm(login)
 
         return {
-            data: {
-                token
-            }
+            "code": 200,
+            result
+            // "result": {
+            //     "sessionId": "98d34f13-95ff-4e27-9952-578560a262b9", "userId": 1,
+            //     "name": "admin"
+            // },
         }
+    }
+
+    async registerByName(dto: LoginDTO) {
+
+        const { name, password } = dto
+        const result = await this.register({
+            phoneNumber: '',
+            name,
+            password,
+            passwordRepeat: password
+        })
+        return { "code": 200, result }
     }
 
     async info(id: string) {
@@ -215,13 +227,14 @@ export class AuthService {
     ): Promise<any> {
 
         if (registerDTO.password !== registerDTO.passwordRepeat) {
-            throw new NotFoundException('两次输入的密码不一致，请检查')
+            throw new BadRequestException('两次输入的密码不一致，请检查')
         }
-        const { phoneNumber } = registerDTO
+        const { name } = registerDTO
         const hasUser = await this.userRepository
-            .findOneBy({ phoneNumber })
+            .findOneBy({ name })
+        console.log('name', hasUser)
         if (hasUser) {
-            throw new NotFoundException('用户已存在')
+            throw new BadRequestException('用户已存在')
         }
     }
 

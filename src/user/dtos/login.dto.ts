@@ -5,17 +5,16 @@ import { ApiProperty } from '@nestjs/swagger';
 export class LoginDTO {
 
     /**
-     * 手机号（系统唯一）
+     * 
      */
-    @Matches(regMobileCN, { message: '请输入正确手机号' })
-    @IsNotEmpty({ message: '请输入手机号' })
-    @ApiProperty({ example: '18888888888' })
-    readonly phoneNumber: string;
+    @IsNotEmpty({ message: '请输入用户名' })
+    @ApiProperty({ example: 'admin' })
+    readonly name: string;
 
     /**
      * 用户密码
      */
     @IsNotEmpty({ message: '请输入密码' })
-    @ApiProperty({ example: '888888' })
+    @ApiProperty({ example: 'admin' })
     readonly password: string;
 }
