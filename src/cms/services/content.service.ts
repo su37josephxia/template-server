@@ -28,11 +28,12 @@ export class ContentService {
   }
 
   async findAll({ pageSize, page, userId }): Promise<{ data: Content[], count: number }> {
+
     const [data, count] = await this.contentRepository.findAndCount({
       where: {
-        userId,
+        // userId,
         isDelete: false,
-        type: 'content'
+        // type: 'content'
       },
       order: { createdAt: 'DESC' },
       skip: (page - 1) * pageSize,
