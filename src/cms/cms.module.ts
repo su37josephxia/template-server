@@ -3,6 +3,7 @@ import { SharedModule } from '@/shared/shared.module';
 import { ContentController } from './controllers/content.controller';
 import { CMSProviders } from './cms.providers';
 import { ContentService } from './services/content.service';
+import { TemplateController } from './controllers/template.controller';
 
 
 
@@ -11,7 +12,7 @@ import { ContentService } from './services/content.service';
         SharedModule,
     ],
     controllers: [
-        ContentController
+        ContentController, TemplateController
     ],
     providers: [
         ...CMSProviders, ContentService

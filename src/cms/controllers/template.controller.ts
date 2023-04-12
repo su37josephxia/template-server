@@ -31,7 +31,7 @@ import { CreateContentDto, UpdateContentDto } from '../dtos/content.dto';
 import { AuthGuard } from '@nestjs/passport';
 @ApiTags('模版')
 @Controller('api/web/template')
-export class ContentController {
+export class TemplateController {
   constructor(private readonly ContentService: ContentService) { }
 
 
