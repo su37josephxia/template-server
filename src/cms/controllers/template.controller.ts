@@ -29,38 +29,14 @@ import {
 import { PaginationParamsDto } from '../../shared/dtos/pagination-params.dto'
 import { CreateContentDto, UpdateContentDto } from '../dtos/content.dto';
 import { AuthGuard } from '@nestjs/passport';
-@ApiTags('内容')
-@Controller('api/web/content')
+@ApiTags('模版')
+@Controller('api/web/template')
 export class ContentController {
   constructor(private readonly ContentService: ContentService) { }
 
-  @ApiOperation({
-    summary: '新增内容',
-  })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    type: SwaggerBaseApiResponse(CreateContentDto),
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    type: BaseApiErrorResponse,
-  })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  @Post('save')
-  @HttpCode(200)
-  async create(@Body() dto: CreateContentDto, @Req() req
-
-  ) {
-    const userId = req.user.id
-    dto.userId = userId
-    const content = await this.ContentService.create(dto)
-    // content['id'] = content._id
-    return content
-  }
 
   @ApiOperation({
-    summary: '查找所有内容',
+    summary: '查找所有模版',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -79,7 +55,7 @@ export class ContentController {
   ) {
     const userId = req.user.id
     const { pageSize, page } = query
-    const { data, count } = await this.ContentService.findAll({
+    const { data, count } = await this.ContentService.findAllTemplate({
       ...query, userId
     });
 
@@ -91,7 +67,7 @@ export class ContentController {
   }
 
   @ApiOperation({
-    summary: '查找单个内容',
+    summary: '查找单个模版',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -107,39 +83,4 @@ export class ContentController {
     return await this.ContentService.findOne(id)
   }
 
-  @ApiOperation({
-    summary: '更新单个内容',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    type: SwaggerBaseApiResponse(CreateContentDto),
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    type: BaseApiErrorResponse,
-  })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  @Patch(':id')
-  @HttpCode(200)
-  async update(@Param('id') id: string, @Body() updateCourseDto: UpdateContentDto) {
-    return {
-      data: await this.ContentService.update(id, updateCourseDto)
-    }
-  }
-
-  @ApiOperation({
-    summary: '删除单个内容',
-  })
-  @ApiResponse({
-    status: HttpStatus.NO_CONTENT,
-  })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  @Post('delete')
-  @HttpCode(200)
-  remove(@Body() dto) {
-    const { id } = dto
-    return this.ContentService.remove(id);
-  }
 }

@@ -31,7 +31,26 @@ export class ContentService {
     const [data, count] = await this.contentRepository.findAndCount({
       where: {
         userId,
-        isDelete: false
+        isDelete: false,
+        type: 'content'
+      },
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * pageSize,
+      take: (pageSize * 1),
+      cache: true
+    })
+
+    return {
+      data, count
+    }
+  }
+
+  async findAllTemplate({ pageSize, page, userId }): Promise<{ data: Content[], count: number }> {
+    const [data, count] = await this.contentRepository.findAndCount({
+      where: {
+        userId,
+        isDelete: false,
+        type: 'template'
       },
       order: { createdAt: 'DESC' },
       skip: (page - 1) * pageSize,
