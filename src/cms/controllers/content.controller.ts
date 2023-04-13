@@ -35,7 +35,7 @@ export class ContentController {
   constructor(private readonly ContentService: ContentService) { }
 
   @ApiOperation({
-    summary: '新增内容',
+    summary: '新增/更新内容',
   })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -107,26 +107,26 @@ export class ContentController {
     return await this.ContentService.findOne(id)
   }
 
-  @ApiOperation({
-    summary: '更新单个内容',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    type: SwaggerBaseApiResponse(CreateContentDto),
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    type: BaseApiErrorResponse,
-  })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
-  @Patch(':id')
-  @HttpCode(200)
-  async update(@Param('id') id: string, @Body() updateCourseDto: UpdateContentDto) {
-    return {
-      data: await this.ContentService.update(id, updateCourseDto)
-    }
-  }
+  // @ApiOperation({
+  //   summary: '更新单个内容',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   type: SwaggerBaseApiResponse(CreateContentDto),
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.NOT_FOUND,
+  //   type: BaseApiErrorResponse,
+  // })
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard('jwt'))
+  // @Patch(':id')
+  // @HttpCode(200)
+  // async update(@Param('id') id: string, @Body() updateCourseDto: UpdateContentDto) {
+  //   return {
+  //     data: await this.ContentService.update(id, updateCourseDto)
+  //   }
+  // }
 
   @ApiOperation({
     summary: '删除单个内容',

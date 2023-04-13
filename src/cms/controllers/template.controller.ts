@@ -34,6 +34,29 @@ import { AuthGuard } from '@nestjs/passport';
 export class TemplateController {
   constructor(private readonly ContentService: ContentService) { }
 
+  @ApiOperation({
+    summary: '新增/更新模版',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    type: SwaggerBaseApiResponse(CreateContentDto),
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    type: BaseApiErrorResponse,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Post('save')
+  @HttpCode(200)
+  async create(@Body() dto: CreateContentDto, @Req() req
+
+  ) {
+    const userId = req.user.id
+    dto.userId = userId
+    const content = await this.ContentService.create(dto)
+    return content
+  }
 
   @ApiOperation({
     summary: '查找所有模版',
@@ -83,4 +106,18 @@ export class TemplateController {
     return await this.ContentService.findOne(id)
   }
 
+  @ApiOperation({
+    summary: '删除单个模版',
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Post('delete')
+  @HttpCode(200)
+  remove(@Body() dto) {
+    const { id } = dto
+    return this.ContentService.remove(id);
+  }
 }
