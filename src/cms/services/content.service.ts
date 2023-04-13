@@ -123,7 +123,7 @@ export class ContentService {
 
   async runPuppeteer(url, { thumbnailFilename,
     thumbnailFullFilename }) {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true });
     const page = await browser.newPage();
 
     await page.goto(url,
