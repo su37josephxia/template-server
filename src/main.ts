@@ -25,6 +25,7 @@ async function bootstrap() {
     }),
   );
 
+  // 跨域CORS请求
   app.use((req, res, next) => {
     const origin = req.headers.origin;
     // if (allowedOrigins.includes(origin)) {
@@ -34,14 +35,15 @@ async function bootstrap() {
     next();
   });
 
+  // 输入项校验功能
   app.useGlobalPipes(new ValidationPipe({
     forbidUnknownValues: false
   }))
 
+  // 统一应答处理
   app.useGlobalInterceptors(new RemoveSensitiveUserInfoInterceptor())
 
-  const uploadDir = (!!process.env.UPLOAD_DIR && process.env.UPLOAD_DIR !== '') ? process.env.UPLOAD_DIR : join(__dirname, '../../..', 'static/upload')
-
+  const uploadDir = (!!process.env.UPLOAD_DIR && process.env.UPLOAD_DIR !== '') ? process.env.UPLOAD_DIR : join(__dirname, '../..', 'static/upload')
   app.useStaticAssets(uploadDir, {
     prefix: '/static/upload'
   })

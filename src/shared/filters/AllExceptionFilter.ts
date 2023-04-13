@@ -13,6 +13,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
         const status = exception.getStatus ? exception.getStatus() : 500;
 
+        console.log(exception)
+
         const msg = exception.message
             ? exception.message
             : 'Internal server error';

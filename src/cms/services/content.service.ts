@@ -3,6 +3,9 @@ import { In, Like, Raw, MongoRepository, ObjectID } from 'typeorm';
 import { Content } from '../entities/content.mongo.entity'
 import { PaginationParamsDto } from '../../shared/dtos/pagination-params.dto'
 import { CreateContentDto, UpdateContentDto } from '../dtos/content.dto';
+import * as puppeteer from 'puppeteer'
+import { join } from 'path'
+import { ensureDir, outputFile } from 'fs-extra'
 
 @Injectable()
 export class ContentService {
@@ -20,10 +23,16 @@ export class ContentService {
       const count = await this.contentRepository.count()
       dto.id = count + 1
       dto['isDelete'] = false
+      // 异步生成缩略图
+      dto.thumbnail = await this.takeScreenshot(dto.id)
       ret = await this.contentRepository.save(dto)
     } else {
+      // 异步生成缩略图
+      dto.thumbnail = await this.takeScreenshot(dto.id)
       ret = await this.contentRepository.updateOne({ id: dto.id }, { $set: dto })
     }
+
+
     return ret
   }
 
@@ -74,6 +83,7 @@ export class ContentService {
 
   async update(id: string, dto: UpdateContentDto) {
 
+
     const ret = await this.contentRepository.update(id, dto)
 
     // TODO 暂时使用同步刷新
@@ -85,4 +95,50 @@ export class ContentService {
   async remove(id: string): Promise<any> {
     return await this.contentRepository.updateOne({ id: parseInt(id) }, { $set: { isDelete: true } })
   }
+
+
+  /**
+   * 截取缩略图
+   * @param url 
+   * @param id 
+   */
+  async takeScreenshot(id) {
+    const url = `https://builder-lemon.vercel.app/?id=24`
+    const prefix = 'static/upload/'
+    const imgPath = join(__dirname, '../../../..', prefix)
+    await ensureDir(imgPath)
+    const thumbnailFilename = `thumb_header_${id}.png`;
+    const thumbnailFullFilename = `thumb_full_${id}.png`;
+    this.runPuppeteer(url, {
+      thumbnailFilename: join(imgPath, thumbnailFilename),
+      thumbnailFullFilename: join(imgPath, thumbnailFullFilename)
+    })
+
+    return {
+      header: prefix + thumbnailFilename,
+      full: prefix + thumbnailFullFilename
+    }
+
+  }
+
+  async runPuppeteer(url, { thumbnailFilename,
+    thumbnailFullFilename }) {
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+
+    await page.goto(url,
+      { waitUntil: 'networkidle0' }
+    );
+    await page.screenshot({
+      path: thumbnailFilename
+    });
+
+    await page.screenshot({
+      fullPage: true, // 是否截全屏
+      path: thumbnailFullFilename
+    });
+    console.log('缩略图生成完成。。。。')
+    await browser.close();
+  }
+
 }

@@ -22,6 +22,9 @@ export class CreateContentDto {
     @ApiProperty({ example: '1' })
     userId?: ObjectId;
 
+    @ApiProperty()
+    thumbnail?: object
+
 }
 
 export class UpdateContentDto extends PartialType(CreateContentDto) {
