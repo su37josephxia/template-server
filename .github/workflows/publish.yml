@@ -2,7 +2,7 @@ name: Public Admin
 
 on:
   push:
-    branches: [test]
+    branches: [main]
 jobs:
   PullSource:
     runs-on: ubuntu-latest
