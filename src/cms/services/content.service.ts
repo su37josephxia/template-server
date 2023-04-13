@@ -103,7 +103,8 @@ export class ContentService {
    * @param id 
    */
   async takeScreenshot(id) {
-    const url = `https://builder-lemon.vercel.app/?id=24`
+    const url = `https://www.baidu.com`
+    // const url = `https://builder-lemon.vercel.app/?id=24`
     const prefix = 'static/upload/'
     const imgPath = join(__dirname, '../../../..', prefix)
     await ensureDir(imgPath)
