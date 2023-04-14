@@ -105,7 +105,8 @@ export class ContentService {
   async takeScreenshot(id) {
     // const url = `https://www.baidu.com`
     const url = `http://builder.codebus.tech/?id=${id}`
-    const prefix = 'static/upload/'
+    const host = 'http://template.josephxia.com'
+    const prefix = `${host}/static/upload/`
     const imgPath = join(__dirname, '../../../..', prefix)
     await ensureDir(imgPath)
     const thumbnailFilename = `thumb_header_${id}.png`;
@@ -124,7 +125,12 @@ export class ContentService {
 
   async runPuppeteer(url, { thumbnailFilename,
     thumbnailFullFilename }) {
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: true });
+    const browser = await puppeteer.launch({
+      args: [
+        '--no-sandbox',
+        '--lang=zh-CN'
+      ], headless: true
+    });
     const page = await browser.newPage();
 
     await page.goto(url,
