@@ -4,6 +4,8 @@
 /static
 .env
 
+mongodb
+
 # Logs
 logs
 *.log
