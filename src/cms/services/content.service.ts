@@ -105,8 +105,8 @@ export class ContentService {
   async takeScreenshot(id) {
     // const url = `https://www.baidu.com`
     const url = `http://builder.codebus.tech/?id=${id}`
-    const host = 'http://template.josephxia.com'
-    const prefix = `${host}/static/upload/`
+    const host = 'http://template.josephxia.com/'
+    const prefix = `static/upload/`
     const imgPath = join(__dirname, '../../../..', prefix)
     await ensureDir(imgPath)
     const thumbnailFilename = `thumb_header_${id}.png`;
@@ -117,8 +117,8 @@ export class ContentService {
     })
 
     return {
-      header: prefix + thumbnailFilename,
-      full: prefix + thumbnailFullFilename
+      header: host + prefix + thumbnailFilename,
+      full: host + prefix + thumbnailFullFilename
     }
 
   }
