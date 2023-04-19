@@ -37,6 +37,23 @@ export class AuthController {
     }
 
     @ApiOperation({
+        summary: '用户登出',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK
+    })
+    @ApiResponse({
+        status: HttpStatus.NOT_FOUND,
+        type: BaseApiErrorResponse,
+    })
+    @HttpCode(200)
+    @Post('logout')
+    async logout(
+    ): Promise<any> {
+        return
+    }
+
+    @ApiOperation({
         summary: '注册',
     })
     @ApiResponse({
