@@ -33,7 +33,7 @@ export class ContentService {
     }
 
 
-    return ret
+    return dto
   }
 
   async findAll({ pageSize, page, userId }): Promise<{ data: Content[], count: number }> {
