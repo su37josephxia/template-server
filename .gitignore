@@ -2,6 +2,10 @@
 /dist
 /node_modules
 
+/mongodb/data
+
+/static
+
 # Logs
 logs
 *.log
