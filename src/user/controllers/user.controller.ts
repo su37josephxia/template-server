@@ -24,7 +24,7 @@ export class UserController {
     type: CreateUserDto
   })
   create(@Body() createUserDto: CreateUserDto) {
-    // throw new HttpException('自定义异常冲突', HttpStatus.CONFLICT)
+    throw new HttpException('自定义异常冲突', HttpStatus.CONFLICT)
 
     // console.log('环境变量:', this.configService.get<string>('database.url'))
 
