@@ -133,6 +133,9 @@ export class ContentService {
     });
     const page = await browser.newPage();
 
+    // 设置打开分辨率
+    await page.setViewport({ width: 750, height: 800 });
+
     await page.goto(url,
       { waitUntil: 'networkidle0' }
     );
