@@ -20,4 +20,7 @@ export abstract class Common {
         select: false
     })
     version: number
+
+    @Column()
+    thumbnail: object
 }
