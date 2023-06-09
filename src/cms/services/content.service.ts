@@ -28,6 +28,9 @@ export class ContentService {
       ret = await this.contentRepository.updateOne({ id: dto.id }, { $set: dto })
     }
 
+    // 异步生成截图
+    dto.thumbnail = await this.takeScreenshot(dto.id)
+    ret = await this.contentRepository.updateOne({ id: dto.id }, { $set: dto })
 
     return dto
   }
@@ -92,6 +95,59 @@ export class ContentService {
 
   async remove(id: string): Promise<any> {
     return await this.contentRepository.updateOne({ id: parseInt(id) }, { $set: { isDelete: true } })
+  }
+
+  async takeScreenshot(id) {
+    const url = `http://builder.codebus.tech/?id=${id}`
+    const host = 'http://template.codebus.tech'
+    const prefix = `static/upload`
+    const imgPath = join(__dirname, '../../../..', prefix)
+    const thumbnailFilename = `thumb_header_${id}.png`
+    const thumbnailFullFilename = `thumb_full_${id}.png`
+
+    await this.runPuppteer(url, {
+      thumbnailFilename: join(imgPath, thumbnailFilename),
+      thumbnailFullFilename: join(imgPath, thumbnailFullFilename),
+    })
+
+    return {
+      header: host + prefix + thumbnailFilename,
+      full: host + prefix + thumbnailFullFilename
+    }
+  }
+
+  async runPuppteer(url, {
+    thumbnailFilename, thumbnailFullFilename,
+  }) {
+    // 打开浏览器
+    const browser = await puppeteer.launch({
+      args: [
+        '--no-sandbox', '--lang=zh-CN'
+      ],
+      headless: true
+    })
+
+    const page = await browser.newPage()
+
+    await page.setViewport({ width: 750, height: 800 })
+
+    await page.goto(url, {
+      waitUntil: 'networkidle0'
+    })
+
+    // 截图
+    await page.screenshot({
+      path: thumbnailFilename
+    })
+
+    await page.screenshot({
+      fullPage: true,
+      path: thumbnailFullFilename
+    })
+
+    console.log('截图 OK...')
+
+    await browser.close()
   }
 
 
