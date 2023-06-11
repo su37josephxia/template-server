@@ -22,6 +22,8 @@ export class CreateContentDto {
     @ApiProperty({ example: '1' })
     userId?: ObjectId;
 
+    publish: boolean = false
+
     @ApiProperty()
     thumbnail?: object
 

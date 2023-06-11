@@ -6,6 +6,7 @@ import { CreateContentDto, UpdateContentDto } from '../dtos/content.dto';
 import * as puppeteer from 'puppeteer'
 import { join } from 'path'
 import { ensureDir, outputFile } from 'fs-extra'
+import axios from 'axios';
 
 @Injectable()
 export class ContentService {
@@ -15,23 +16,28 @@ export class ContentService {
   ) { }
 
 
-  async create(dto: CreateContentDto) {
-    const has = await this.contentRepository.findOneBy({ id: dto.id })
+  async create(dto: UpdateContentDto) {
+    const has = await this.contentRepository.findOneBy({ id: parseInt(dto.id as any) })
     let ret
     if (!has) {
       // 判断是否存在
       const count = await this.contentRepository.count()
       dto.id = count + 1
       dto['isDelete'] = false
+      dto.publish = false
       // 异步生成缩略图
-      dto.thumbnail = await this.takeScreenshot(dto.id)
       ret = await this.contentRepository.save(dto)
     } else {
-      // 异步生成缩略图
-      dto.thumbnail = await this.takeScreenshot(dto.id)
       ret = await this.contentRepository.updateOne({ id: dto.id }, { $set: dto })
     }
 
+    // 同步SSR
+    await this.sync(dto.id)
+
+    // if (dto.publish) {
+    const thumbnail = await this.takeScreenshot(dto.id)
+    dto.thumbnail = thumbnail
+    // }
 
     return dto
   }
@@ -82,18 +88,39 @@ export class ContentService {
   }
 
   async update(id: string, dto: UpdateContentDto) {
-
-
     const ret = await this.contentRepository.update(id, dto)
-
-    // TODO 暂时使用同步刷新
-    // await this.sync(id)
     return ret
   }
 
 
-  async remove(id: string): Promise<any> {
-    return await this.contentRepository.updateOne({ id: parseInt(id) }, { $set: { isDelete: true } })
+  async remove(id: number): Promise<any> {
+    const ret = await this.contentRepository.updateOne({ id }, { $set: { isDelete: true, publish: false } })
+
+    // 同步SSR
+    await this.sync(id)
+
+    return ret
+  }
+
+  /**
+   * 刷新ssr服务
+   * @param id 
+   */
+  async sync(id: number) {
+    const secret = `iamvalidatetoken`
+    const url = `api/revalidate?secret=${secret}&id=${id}`
+    const host = `http://builder.codebus.tech`
+    console.log('sync nest validate url:', host + '/' + url)
+    try {
+      console.log('url', url)
+      await axios.get(host + '/' + url)
+    } catch (error) {
+      // console.log(error)
+      console.log('同步失败')
+      throw error
+    }
+
+    return
   }
 
 
@@ -104,7 +131,7 @@ export class ContentService {
    */
   async takeScreenshot(id) {
     // const url = `https://www.baidu.com`
-    const url = `http://builder.codebus.tech/?id=${id}`
+    const url = `http://builder.codebus.tech/${id}`
     const host = 'http://template.codebus.tech/'
     const prefix = `static/upload/`
     const imgPath = join(__dirname, '../../../..', prefix)
@@ -116,10 +143,14 @@ export class ContentService {
       thumbnailFullFilename: join(imgPath, thumbnailFullFilename)
     })
 
-    return {
+    const thumbnail = {
       header: host + prefix + thumbnailFilename,
       full: host + prefix + thumbnailFullFilename
     }
+
+    await this.contentRepository.updateOne({ id }, { $set: { thumbnail } })
+
+    return thumbnail
 
   }
 

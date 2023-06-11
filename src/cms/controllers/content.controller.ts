@@ -29,6 +29,7 @@ import {
 import { PaginationParamsDto } from '../../shared/dtos/pagination-params.dto'
 import { CreateContentDto, UpdateContentDto } from '../dtos/content.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { IdDTO } from '@/shared/dtos/id.dto';
 @ApiTags('内容')
 @Controller('api/web/content')
 export class ContentController {
@@ -138,8 +139,58 @@ export class ContentController {
   @UseGuards(AuthGuard('jwt'))
   @Post('delete')
   @HttpCode(200)
-  remove(@Body() dto) {
+  remove(@Body() dto: IdDTO) {
     const { id } = dto
     return this.ContentService.remove(id);
+  }
+
+
+  @ApiOperation({
+    summary: '发布单个内容',
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Post('publish')
+  @HttpCode(200)
+  publish(@Body() dto: IdDTO) {
+    const { id } = dto
+    return this.ContentService.create({ id, publish: true });
+  }
+
+  @ApiOperation({
+    summary: '下架(反发布)单个内容',
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Post('unpublish')
+  @HttpCode(200)
+  unpublish(@Body() dto: IdDTO) {
+    const { id } = dto
+    return this.ContentService.create({ id, publish: false });
+  }
+
+
+
+  @ApiOperation({
+    summary: '生成快照',
+  })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+  })
+  @ApiBearerAuth()
+  // @UseGuards(AuthGuard('jwt'))
+  @Get('takeScreenshot/:id')
+  @HttpCode(200)
+  async takeScreenshot(@Param('id') id: string) {
+    if (!id) {
+      return {}
+    }
+    return await this.ContentService.takeScreenshot(id);
   }
 }
