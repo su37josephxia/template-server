@@ -24,16 +24,17 @@ async function refresh(id) {
     // 发送POST请求
     // 
     if (res.data.result) {
-        console.log('res:', id, res.data)
+        console.log('res:', id, res.data.result.publish, res.data.result.thumbnail)
+
         // res = await axios.post(host + 'api/web/content/unpublish', data, config)
     } else {
-        console.log('nno', id)
+        // console.log('nno', id)
     }
 
 }
 setTimeout(
     async () => {
-        for (let i = 1; i < 5; i++) {
+        for (let i = 1; i < 230; i++) {
             await refresh(i)
         }
     }
