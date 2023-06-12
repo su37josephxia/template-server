@@ -91,6 +91,25 @@ export class ContentController {
     }
   }
 
+
+  @ApiOperation({
+    summary: '查找已发布文章列表',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: SwaggerBaseApiResponse([CreateContentDto]),
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    type: BaseApiErrorResponse,
+  })
+  @Get('publishlist')
+  async publishList() {
+    const data = await this.ContentService.publishList();
+    console.log('data:', data)
+    return data
+  }
+
   @ApiOperation({
     summary: '查找单个内容',
   })

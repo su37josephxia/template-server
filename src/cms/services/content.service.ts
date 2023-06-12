@@ -61,6 +61,17 @@ export class ContentService {
     }
   }
 
+  async publishList() {
+    const data = await this.contentRepository.findBy({
+      where: {
+        isDelete: false,
+        publish: true
+      },
+    })
+    return data.map(v => '' + v.id)
+  }
+
+
   async findAllTemplate({ pageSize, page, userId }): Promise<{ data: Content[], count: number }> {
     const [data, count] = await this.contentRepository.findAndCount({
       where: {
