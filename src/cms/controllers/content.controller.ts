@@ -178,7 +178,7 @@ export class ContentController {
 
 
   @ApiOperation({
-    summary: '生成快照Screenshot',
+    summary: '生成快照',
   })
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,

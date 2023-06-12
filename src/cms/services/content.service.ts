@@ -159,7 +159,11 @@ export class ContentService {
     const browser = await puppeteer.launch({
       args: [
         '--no-sandbox',
-        '--lang=zh-CN'
+        '--lang=zh-CN',
+        '--font-render-hinting=medium',
+        '--font-antialiasing=standard',
+        `--font-family="WenQuanYi Zen Hei"`
+
       ], headless: true
     });
     const page = await browser.newPage();
