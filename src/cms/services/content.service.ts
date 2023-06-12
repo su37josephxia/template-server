@@ -103,13 +103,13 @@ export class ContentService {
   }
 
   /**
-   * 刷新ssr服务
+   * 刷新ssg服务
    * @param id 
    */
   async sync(id: number) {
     const secret = `iamvalidatetoken`
     const url = `api/revalidate?secret=${secret}&id=${id}`
-    const host = `http://builder.codebus.tech`
+    const host = `http://ssgbuilder.codebus.tech`
     console.log('sync nest validate url:', host + '/' + url)
     try {
       console.log('url', url)
