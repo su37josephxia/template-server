@@ -20,7 +20,6 @@ export class Content extends Common {
     userId?: ObjectId
 
     @Column('boolean')
-    public: boolean
-
+    publish: boolean
 
 }
