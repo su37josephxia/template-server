@@ -180,7 +180,7 @@ export class ContentController {
   }
 
   @ApiOperation({
-    summary: '下架(反发布)单个内容',
+    summary: '下架(反向发布)单个内容',
   })
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
