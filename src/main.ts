@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { generateDocument } from './doc';
 import { RemoveSensitiveUserInfoInterceptor } from './shared/interceptors/remove-sensitive-info.interceptor';
+<<<<<<< HEAD
 import rateLimit from 'express-rate-limit';
 
 async function bootstrap() {
@@ -14,6 +15,13 @@ async function bootstrap() {
       max: 100, // limit each IP to 100 requests per windowMs
     }),
   );
+=======
+import helmet from 'helmet'
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  app.use(helmet({}))
+>>>>>>> study-23
 
   app.useGlobalPipes(new ValidationPipe())
 
