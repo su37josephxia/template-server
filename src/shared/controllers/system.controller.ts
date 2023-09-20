@@ -14,13 +14,13 @@ export class SystemController {
     })
     @Get('/datebase')
     async list() {
-        console.log('list ...')
-        // ls 
-        const ret = await this.spawn('ls', ['-a'], {})
-        console.log('ret', ret)
+        const ret = await this.spawn('docker-compose', ['exec', '-T', 'mongo', 'ls', '/dump'], { cwd: './' })
+        console.log(ret)
+        const data = ("" + ret).split('\n')
+        // data.pop()
         return {
             ok: 1,
-            ret
+            data
         }
     }
 
