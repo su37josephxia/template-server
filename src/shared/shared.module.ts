@@ -4,7 +4,9 @@ import { ConfigModule } from '@nestjs/config';
 import { configModuleOptions } from './configs/module-options';
 import { DatabaseProviders } from './database.providers';
 import { AppLoggerModule } from './logger/logger.module';
+import { SystemController } from './controllers/system.controller';
 @Module({
+    controllers: [SystemController],
     exports: [
         SystemService,
         ConfigModule,
