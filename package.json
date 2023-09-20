@@ -39,6 +39,7 @@
     "class-validator": "^0.14.0",
     "compressing": "^1.9.0",
     "crypto": "^1.0.1",
+    "express-rate-limit": "^7.0.1",
     "express-session": "^1.17.3",
     "fs-extra": "^11.1.1",
     "ioredis": "^5.3.1",
