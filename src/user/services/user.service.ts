@@ -4,7 +4,7 @@ import { UpdateUserDto } from '../dtos/update-user.dto';
 import { SystemService } from '../../shared/system.service';
 import { MongoRepository } from 'typeorm';
 import { User } from '../entities/user.mongo.entity';
-import { AppLogger } from 'src/shared/logger/logger.service';
+import { AppLogger } from '../../shared/logger/logger.service';
 import { PaginationParamsDto } from '../../shared/dtos/pagination-params.dto';
 
 
