@@ -142,7 +142,7 @@ export class ContentService {
    */
   async takeScreenshot(id) {
     // const url = `https://www.baidu.com`
-    const url = `http://ssrbuilder.codebus.tech/?id=${id}`
+    const url = `http://builder.codebus.tech/?id=${id}&preview`
     const host = 'http://template.codebus.tech/'
     const prefix = `static/upload/`
     const imgPath = join(__dirname, '../../../..', prefix)
