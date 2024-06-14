@@ -8,13 +8,13 @@ module.exports = {
     ssr: [
         {
             name: "builder-ssr",
-            script: "./builder-ssr/process.yml",
+            script: "../builder-ssr/process.yml",
         },
     ],
     ssg: [
         {
             name: "builder-ssg",
-            script: "./builder/process.yml",
+            script: "../builder/process.yml",
         },
     ],
 };
