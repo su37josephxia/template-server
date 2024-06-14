@@ -2,19 +2,19 @@ module.exports = {
     server: [
         {
             name: "template-server",
-            script: "./process.yml",
+            config_file: "./process.yml",
         },
     ],
     ssr: [
         {
             name: "builder-ssr",
-            script: "../builder-ssr/process.yml",
+            config_file: "../builder-ssr/process.yml",
         },
     ],
     ssg: [
         {
             name: "builder-ssg",
-            script: "../builder/process.yml",
+            config_file: "../builder/process.yml",
         },
     ],
 };
